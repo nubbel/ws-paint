@@ -1,12 +1,49 @@
 <html>
 	<head>
 		<title>ws-paint</title>
+		<style>
+			body {
+				color: #301000;
+				font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif; 
+   				font-weight: 300;
+			}
+			h1 {
+				text-align: center;
+			}
+			table {
+				width: 100%;
+				height: 80%;
+				margin: 0;
+				padding: 0;
+				overflow: hidden;
+			}
+			iframe {
+				width: 100%;
+				height: 100%;
+				border: 1px solid #301000;
+			}
+		</style>
 	</head>
 	<body>
 		<h1>ws-paint</h1>
-		<iframe src="canvas.html" frameborder="0" width="250" height="250"></iframe>
-		<iframe src="canvas.html" frameborder="0" width="250" height="250"></iframe>
-		<iframe src="canvas.html" frameborder="0" width="250" height="250"></iframe>
-		<iframe src="canvas.html" frameborder="0" width="250" height="250"></iframe>
+
+		<table>
+			<colgroup>
+				<col style="width:50%">
+				<col style="width:50%">
+			</colgroup>
+			<tbody>
+				<tr>
+					<td><iframe src="canvas.html" frameborder="0"></iframe></td>
+					<td><iframe src="canvas.html" frameborder="0"></iframe></td>
+				</tr>
+				<tr>
+					<td><iframe src="canvas.html" frameborder="0"></iframe></td>
+					<td><iframe src="canvas.html" frameborder="0"></iframe></td>
+				</tr>
+			</tbody>
+		</table>
+
+		<p>2013 by <a href="https://github.com/nubbel">Dominique d'Argent</a></p>
 	</body>
 </html>

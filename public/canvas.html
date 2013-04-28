@@ -1,12 +1,20 @@
 <html>
 	<head>
 		<title>ws-paint canvas</title>
+		<style>
+			body { 
+				margin: 0; 
+				padding: 0;
+			}
+			canvas { 
+				width: 100%;
+			 	height: 100%;
+			  	background: #ffffdd;
+			}
+		</style>
 	</head>
 	<body>
-		<div>
-			<canvas id="paint-canvas" width="200" height="200" style="border:1px solid #000000;">
-			</canvas>
-		</div>
+		<canvas id="paint-canvas" style="width:100%;height:100%;"></canvas>
 
 		<script src="/socket.io/socket.io.js"></script>
 		<script>
@@ -17,8 +25,7 @@
 					var socket 	= options.socket,
 						canvas  = options.canvas,
 						context = canvas.getContext('2d'),
-						view 	= new WsPaint.Canvas(context),
-						drawing = false;
+						view 	= new WsPaint.Canvas(context);
 
 					// Setup socket event handlers
 					socket.on('connect', 	socketConnected);
@@ -26,9 +33,14 @@
 				    socket.on('data', 		socketReceivedData);
 
 				    // Setup canvas event handlers
-					canvas.addEventListener("mousedown", mouseDown, false);
-					canvas.addEventListener("mouseup", 	 mouseUp, 	false);
-					canvas.addEventListener("mousemove", mouseMove, false);
+					canvas.addEventListener("mousedown", handleMouseEvent, false);
+					canvas.addEventListener("mousemove", handleMouseEvent, false);
+
+					// setup window event handlers
+					if (global) {
+						global.addEventListener("load", windowResized, false);
+						global.addEventListener("resize", windowResized, false);
+					}
 
 					function socketConnected() {
 				        console.log('Client has connected to the server!');
@@ -44,28 +56,21 @@
 				        drawPoint(data.point);
 					}
 
-					function mouseDown(event) {
-						drawing = true;
-						handleMouseEvent(event);
-					}
-
-					function mouseUp(event) {
-						drawing = false;
-					}
-
-					function mouseMove(event) {
-						if (drawing) {
-							handleMouseEvent(event);
-						}
-					}
-
 					function handleMouseEvent(event) {
-						var point = {
-							x: event.x, 
-							y: event.y 
-						};
+						// check if left mouse button pressed
+						if (event.which === 1) {
+							var point = {
+								x: event.x / canvas.width, 
+								y: event.y / canvas.height 
+							};
 
-						addPoint(point);
+							addPoint(point);
+							}
+					}
+
+					function windowResized(event) {
+						canvas.width  = event.target.innerWidth || event.target.width;
+						canvas.height = event.target.innerHeight || event.target.height;
 					}
 
 					function sendPoint(point) {
@@ -77,11 +82,16 @@
 					}
 
 					function pointSize() {
-						return 0.02 * (canvas.width + canvas.height) / 2;
+						return 0.01 * (canvas.width + canvas.height) / 2;
 					}
 
 					function drawPoint(point) {
-						view.drawPoint(point, pointSize());
+						var viewPoint = {
+							x: point.x * canvas.width,
+							y: point.y * canvas.height
+						}
+
+						view.drawPoint(viewPoint, pointSize());
 					}
 
 					function addPoint(point) {
@@ -93,6 +103,8 @@
 				WsPaint.Canvas = function(context) {
 					return {
 						drawPoint: function(point, size) {
+							context.fillStyle	= '#301000';
+
 							context.beginPath();
 							context.arc(point.x, point.y, size, 0, 2 * Math.PI, true);
 							context.fill();
