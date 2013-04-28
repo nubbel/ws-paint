@@ -9,31 +9,27 @@ var http 	= require('http'),
 server = http.createServer(function(req, res) {
 	console.log(new Date() + ": " + req.method + " " + req.url);
 
-	if (req.url === "/socket") {
-	}
-	else {
-      	var file = "public" + ((req.url === "/") ? "/index.html" : req.url);
-		fs.exists(file, function(exists) {
-			if (exists) {
-				fs.readFile(file, function(error, content) {
-					if (error) {
-						res.writeHead(500);
-						res.end();
-					}
-					else {
-						res.writeHead(200, {
-                			"Content-Type": 'text/html'
-              			});
-						res.end(content);
-					}
-				});
-			}
-			else {
-				res.writeHead(404);
-				res.end();
-			}
-		});
-	}
+  	var file = "public" + ((req.url === "/") ? "/index.html" : req.url);
+	fs.exists(file, function(exists) {
+		if (exists) {
+			fs.readFile(file, function(error, content) {
+				if (error) {
+					res.writeHead(500);
+					res.end();
+				}
+				else {
+					res.writeHead(200, {
+            			"Content-Type": 'text/html'
+          			});
+					res.end(content);
+				}
+			});
+		}
+		else {
+			res.writeHead(404);
+			res.end();
+		}
+	});
 
 
 }).listen(port, function() {
@@ -41,7 +37,6 @@ server = http.createServer(function(req, res) {
 });
 
 io.listen(server).sockets.on('connection', function(socket) {
-	// socket.emit('data', {point: {x: 10, y: 40}});
   	socket.on('data', function (data) {
     	console.log(data);
 		socket.broadcast.emit('data', data);
