@@ -1,6 +1,7 @@
 <html>
 	<head>
 		<title>ws-paint canvas</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 		<style>
 			body { 
 				margin: 0; 
@@ -36,6 +37,10 @@
 					canvas.addEventListener("mousedown", handleMouseEvent, false);
 					canvas.addEventListener("mousemove", handleMouseEvent, false);
 
+				    // Setup canvas touch event handlers
+					canvas.addEventListener("touchstart", handleTouchEvent, false);
+					canvas.addEventListener("touchmove",  handleTouchEvent, false);
+
 					// setup window event handlers
 					if (global) {
 						global.addEventListener("load", windowResized, false);
@@ -66,6 +71,22 @@
 
 							addPoint(point);
 						}
+					}
+
+					function handleTouchEvent(event) {
+						var touches = event.targetTouches;
+
+						for (var i = 0; i < touches.length; i++) {
+							var touch = touches[i];
+							var point = {
+								x: touch.clientX / canvas.width, 
+								y: touch.clientY / canvas.height 
+							}
+
+							addPoint(point);
+						};
+
+						event.preventDefault();
 					}
 
 					function windowResized(event) {
